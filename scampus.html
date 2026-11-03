@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Hive</title>
+
+    <meta name="description"
+        content="A comprehensive Web Application for Managing College Events, Workshops, Seminars, and Competitions.">
+    <meta name="keywords"
+        content="Campus Events, College Fest, Workshop, Seminar, Registration Portal, Student Project">
+    <meta name="author" content="Student Project Team">
+
+    <style>
+        :root {
+            --primary-color: black;
+            --primary-hover: #8391ad;
+            --secondary-color: #0f172a;
+            --accent-color: #f9b7cc;
+            --success-color: #16a34a;
+            --danger-color: #dc2626;
+            --warning-color: #ea580c;
+            --background-light: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition-fast: 0.2s ease;
+        }
+
+        /* Dark Theme Support */
+        body.dark-mode {
+            --background-light: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --secondary-color: #f3afcd;
+        }
+
+
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-light);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            transition: background-color var(--transition-fast), color var(--transition-fast);
+        }
+
+
+        a:focus,
+        button:focus,
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+
+
+        header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .brand-logo svg {
+            fill: var(--primary-color);
+            width: 32px;
+            height: 32px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-fast);
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary-color);
+            background-color: rgba(37, 99, 235, 0.08);
+        }
+
+        .nav-badge {
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 999px;
+            margin-left: 0.3rem;
+        }
+
+
+        .theme-toggle-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            padding: 0.4rem 0.6rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.85rem;
+        }
+
+
+
+        main {
+            flex: 1;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .view-section {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+
+        .hero-banner {
+            background: linear-gradient(135deg, var(--primary-color), #f498b7);
+            color: white;
+            padding: 2.5rem 2rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .hero-banner h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-banner p {
+            opacity: 0.9;
+            max-width: 700px;
+            font-size: 1.05rem;
+        }
+
+
+        .controls-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background-color: var(--card-bg);
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.6rem 1rem 0.6rem 2.4rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background-color: var(--background-light);
+            color: var(--text-main);
+        }
+
+        .search-box svg {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            fill: var(--text-muted);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background-color: var(--background-light);
+            color: var(--text-main);
+            cursor: pointer;
+        }
+
+
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .event-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .event-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+            position: relative;
+            height: 140px;
+            background-color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-header svg {
+            width: 60px;
+            height: 60px;
+            opacity: 0.4;
+        }
+
+        .category-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: rgba(15, 23, 42, 0.85);
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 999px;
+            font-weight: 600;
+            backdrop-filter: blur(4px);
+        }
+
+        .card-body {
+            padding: 1.25rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .event-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .event-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .event-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .meta-item svg {
+            width: 14px;
+            height: 14px;
+            fill: var(--primary-color);
+        }
+
+        .seat-status-bar {
+            margin-top: auto;
+            padding-top: 0.75rem;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        .seat-info-flex {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        .progress-bg {
+            height: 8px;
+            background-color: var(--border-color);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            transition: width 0.4s ease, background-color 0.3s ease;
+        }
+
+        .progress-fill.full {
+            background-color: var(--danger-color);
+        }
+
+        .progress-fill.warning {
+            background-color: var(--warning-color);
+        }
+
+        .card-footer {
+            padding: 1rem 1.25rem;
+            background-color: rgba(0, 0, 0, 0.02);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-primary:disabled {
+            background-color: var(--text-muted);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--border-color);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #b91c1c;
+        }
+
+        .btn-sm {
+            padding: 0.35rem 0.7rem;
+            font-size: 0.8rem;
+        }
+
+        /* Empty State Styling */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+            background-color: var(--card-bg);
+            border-radius: var(--radius-md);
+            border: 1px border-color;
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            fill: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+
+
+        .form-card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        label .required {
+            color: var(--danger-color);
+        }
+
+        input,
+        select,
+        textarea {
+            padding: 0.65rem 0.85rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background-color: var(--background-light);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            transition: border-color var(--transition-fast);
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary-color);
+            background-color: var(--card-bg);
+        }
+
+        .help-text {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            background-color: var(--card-bg);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background-color: rgba(0, 0, 0, 0.03);
+            color: var(--text-main);
+            font-weight: 600;
+            padding: 0.85rem 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: rgba(0, 0, 0, 0.015);
+        }
+
+        /* Ticket Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-confirmed {
+            background-color: #dcfce7;
+            color: #15803d;
+        }
+
+
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-container {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 550px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            transform: scale(0.95);
+            transition: transform 0.25s ease;
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.25rem;
+            color: var(--text-main);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+
+        .ticket-card {
+            border: 2px dashed var(--primary-color);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            background-color: var(--background-light);
+            position: relative;
+        }
+
+        .ticket-header {
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .ticket-id-badge {
+            font-family: monospace;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-top: 0.4rem;
+        }
+
+        .ticket-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            font-size: 0.875rem;
+        }
+
+        .ticket-label {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .ticket-value {
+            font-weight: 600;
+        }
+
+
+
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .toast {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.8rem 1.25rem;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.9rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.success {
+            background-color: var(--success-color);
+        }
+
+        .toast.error {
+            background-color: var(--danger-color);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+
+
+        footer {
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            padding: 1.5rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: auto;
+        }
+
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            #printableTicketArea,
+            #printableTicketArea * {
+                visibility: visible;
+            }
+
+            #printableTicketArea {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+
+            .modal-header,
+            .modal-footer,
+            .no-print {
+                display: none !important;
+            }
+        }
+
+
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .controls-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .ticket-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+    <header>
+        <div class="nav-container">
+            <a href="#" class="brand-logo" id="navHomeLogo">
+                <!-- SVG Logo Graphic -->
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z" />
+                </svg>
+                <span>EventHive|campus event management</span>
+            </a>
+            <nav>
+                <ul>
+                    <li><a class="nav-link active" data-target="viewBrowseEvents">Events Directory</a></li>
+                    <li><a class="nav-link" data-target="viewMyRegistrations">My Tickets <span class="nav-badge"
+                                id="myTicketCount">0</span></a></li>
+                    <li><a class="nav-link" data-target="viewAdminDashboard">Organizer Dashboard</a></li>
+                    <li>
+                        <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Dark Theme">
+                            🌙 <span>Theme</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    
+    <main>
+
+        
+        <section id="viewBrowseEvents" class="view-section active">
+            <div class="hero-banner">
+                <h1>Discover & Register for Campus Events</h1>
+                <p>Explore upcoming college fests, technical workshops, academic seminars, and inter-college
+                    competitions. Reserve your seat instantly!</p>
+            </div>
+
+            
+            <div class="controls-bar">
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search event title, venue or topic..."
+                        oninput="filterEvents()">
+                </div>
+                <div class="filter-group">
+                    <label for="categoryFilter">Category:</label>
+                    <select id="categoryFilter" class="filter-select" onchange="filterEvents()">
+                        <option value="ALL">All Categories</option>
+                        <option value="College Fest">College Fest</option>
+                        <option value="Workshop">Workshop</option>
+                        <option value="Seminar">Seminar</option>
+                        <option value="Competition">Competition</option>
+                    </select>
+                </div>
+            </div>
+
+            
+            <div class="events-grid" id="eventsGridContainer">
+            
+            </div>
+        </section>
+
+        
+        <section id="viewMyRegistrations" class="view-section">
+            <h2 style="margin-bottom: 0.5rem;">My Registered Tickets</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">View and print your active event registration
+                confirmation slips.</p>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ticket ID</th>
+                            <th>Event Title</th>
+                            <th>Student Name</th>
+                            <th>Student ID</th>
+                            <th>Date & Time</th>
+                            <th>Venue</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="myRegistrationsTableBody">
+                        
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        
+        <section id="viewAdminDashboard" class="view-section">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h2>Organizer / Admin Dashboard</h2>
+                    <p style="color: var(--text-muted);">Manage events, monitor live seat capacities, and view
+                        participant rosters.</p>
+                </div>
+                <button class="btn btn-primary" onclick="switchAdminTab('createEvent')">+ Create New Event</button>
+            </div>
+
+            
+            <div style="display: flex; gap: 1rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1.5rem;">
+                <button class="nav-link active" id="btnTabManageEvents"
+                    onclick="switchAdminSubTab('manageEvents')">Manage Events</button>
+                <button class="nav-link" id="btnTabRoster" onclick="switchAdminSubTab('roster')">All Registrations
+                    Roster</button>
+            </div>
+
+
+            <div id="adminSubTabManageEvents">
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Date</th>
+                                <th>Capacity</th>
+                                <th>Registered</th>
+                                <th>Seats Left</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminEventsTableBody">
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            
+            <div id="adminSubTabCreateEvent" style="display: none;">
+                <div class="form-card">
+                    <h3 style="margin-bottom: 1.25rem;">Create New Campus Event</h3>
+                    <form id="createEventForm" onsubmit="handleCreateEvent(event)">
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label for="evTitle">Event Title <span class="required">*</span></label>
+                                <input type="text" id="evTitle" required placeholder="e.g. Annual Tech Symposium 2026">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="evCategory">Category <span class="required">*</span></label>
+                                <select id="evCategory" required>
+                                    <option value="College Fest">College Fest</option>
+                                    <option value="Workshop">Workshop</option>
+                                    <option value="Seminar">Seminar</option>
+                                    <option value="Competition">Competition</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="evCapacity">Maximum Capacity (Seat Limit) <span
+                                        class="required">*</span></label>
+                                <input type="number" id="evCapacity" min="1" max="1000" required placeholder="e.g. 50">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="evDate">Schedule Date & Time <span class="required">*</span></label>
+                                <input type="datetime-local" id="evDate" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="evVenue">Venue / Location <span class="required">*</span></label>
+                                <input type="text" id="evVenue" required placeholder="e.g. Shanti Devi Mittal auditorium">
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label for="evEligibility">Eligibility Criteria <span class="required">*</span></label>
+                                <input type="text" id="evEligibility" required
+                                    placeholder="e.g. Open for Computer Science & IT students from 2nd/3rd Year">
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label for="evDescription">Event Description <span class="required">*</span></label>
+                                <textarea id="evDescription" rows="4" required
+                                    placeholder="Provide brief summary of the workshop or fest agenda..."></textarea>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: flex-end;">
+                            <button type="button" class="btn btn-secondary"
+                                onclick="switchAdminSubTab('manageEvents')">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Publish Event</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            
+            <div id="adminSubTabRoster" style="display: none;">
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ticket ID</th>
+                                <th>Student Name</th>
+                                <th>Student ID</th>
+                                <th>Email</th>
+                                <th>Department</th>
+                                <th>Event Title</th>
+                                <th>Date Registered</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminRosterTableBody">
+                            <!-- Dynamic Injection -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+
+    <div class="modal-overlay" id="registrationModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="modalEventTitle">Event Registration</h3>
+                <button class="close-btn" onclick="closeModal('registrationModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="studentRegistrationForm" onsubmit="handleStudentRegistration(event)">
+                    <input type="hidden" id="registerEventId">
+
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label for="regStudentName">Full Name <span class="required">*</span></label>
+                        <input type="text" id="regStudentName" required placeholder="John Doe">
+                    </div>
+
+                    <div class="form-grid" style="margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="regStudentId">Student Roll/ID <span class="required">*</span></label>
+                            <input type="text" id="regStudentId" required placeholder="CS2026-042">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="regDepartment">Department <span class="required">*</span></label>
+                            <select id="regDepartment" required>
+                                <option value="">Select Dept</option>
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Information Tech">Information Tech</option>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Mechanical">Mechanical</option>
+                                <option value="Business Admin">Business Admin</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-grid" style="margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="regEmail">Campus Email <span class="required">*</span></label>
+                            <input type="email" id="regEmail" required placeholder="student@college.edu">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="regYear">Academic Year <span class="required">*</span></label>
+                            <select id="regYear" required>
+                                <option value="1st Year">1st Year</option>
+                                <option value="2nd Year">2nd Year</option>
+                                <option value="3rd Year">3rd Year</option>
+                                <option value="4th Year">4th Year</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: flex-end;">
+                        <button type="button" class="btn btn-secondary"
+                            onclick="closeModal('registrationModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Confirm & Reserve Seat</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="modal-overlay" id="confirmationTicketModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3>Registration Confirmation Slip</h3>
+                <button class="close-btn" onclick="closeModal('confirmationTicketModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="ticket-card" id="printableTicketArea">
+                    <div class="ticket-header">
+                        <h2 style="font-size: 1.2rem; color: var(--primary-color);">CAMPUS EVENT PASS</h2>
+                        <span class="ticket-id-badge" id="slipTicketId">TCK-000000</span>
+                        <p style="font-size: 0.8rem; margin-top: 0.2rem; color: var(--text-muted);">Present this slip at
+                            venue entrance</p>
+                    </div>
+
+                    <div class="ticket-details">
+                        <div>
+                            <span class="ticket-label">Event Name</span>
+                            <div class="ticket-value" id="slipEventTitle">-</div>
+                        </div>
+                        <div>
+                            <span class="ticket-label">Category</span>
+                            <div class="ticket-value" id="slipCategory">-</div>
+                        </div>
+                        <div>
+                            <span class="ticket-label">Student Name</span>
+                            <div class="ticket-value" id="slipStudentName">-</div>
+                        </div>
+                        <div>
+                            <span class="ticket-label">Student ID</span>
+                            <div class="ticket-value" id="slipStudentId">-</div>
+                        </div>
+                        <div>
+                            <span class="ticket-label">Date & Time</span>
+                            <div class="ticket-value" id="slipDate">-</div>
+                        </div>
+                        <div>
+                            <span class="ticket-label">Venue</span>
+                            <div class="ticket-value" id="slipVenue">-</div>
+                        </div>
+                    </div>
+
+                    <div
+                        style="margin-top: 1.5rem; text-align: center; border-top: 1px solid var(--border-color); padding-top: 0.8rem;">
+                        <span class="status-badge status-confirmed">SEAT CONFIRMED</span>
+                    </div>
+                </div>
+
+                <div class="no-print" style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button class="btn btn-secondary" onclick="closeModal('confirmationTicketModal')">Close</button>
+                    <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Download Slip</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="toast-container" id="toastContainer"></div>
+
+   
+    <footer>
+        <p>&copy; 2026 Campus Event Management Portal | Web Technologies Student Lab Project</p>
+    </footer>
+
+   
+    <script>
+        
+        const sampleEvents = [
+            {
+
+                title: "HackCampus 24-Hour Web Hackathon",
+                category: "Competition",
+                capacity: 100,
+                registeredCount: 28,
+                date: "2026-11-15T09:00",
+                venue: "Block 34, School of computer Science",
+                eligibility: "All UG/PG Engineering Students",
+                description: "Build innovative web solutions addressing campus sustainability and automation. Exciting prizes & certificates!"
+            },
+            {
+                id: "EVT-102",
+                title: "AI & Machine Learning Essentials Workshop",
+                category: "Workshop",
+                capacity: 40,
+                registeredCount: 40, // Fully Booked Example
+                date: "2026-11-20T14:00",
+                venue: "Shanti Devi Mittal Auditorium",
+                eligibility: "Pre-requisite: Basic Python Knowledge",
+                description: "Hands-on workshop covering foundational neural networks, data preprocessing, and model building."
+            },
+            {
+                id: "EVT-103",
+                title: "Annual Cultural Fest - Rhythm 2026",
+                category: "College Fest",
+                capacity: 500,
+                registeredCount: 285,
+                date: "2026-12-05T17:00",
+                venue: "Main Campus Grounds",
+                eligibility: "Open to all students & faculty",
+                description: "Experience music performances, dance competitions, drama, food stalls, and guest artist night."
+            }
+        ];
+
+        // Global State variables
+        let events = [];
+        let registrations = [];
+
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStateFromStorage();
+            setupNavigation();
+            renderEventsGrid();
+            renderRegistrationsTable();
+            renderAdminEventsTable();
+            renderAdminRosterTable();
+            updateMyTicketBadge();
+        });
+
+        
+        function loadStateFromStorage() {
+            const savedEvents = localStorage.getItem('campus_events');
+            const savedRegs = localStorage.getItem('campus_registrations');
+
+            if (savedEvents) {
+                events = JSON.parse(savedEvents);
+            } else {
+                events = sampleEvents;
+                saveEventsToStorage();
+            }
+
+            if (savedRegs) {
+                registrations = JSON.parse(savedRegs);
+            } else {
+                registrations = [];
+                saveRegistrationsToStorage();
+            }
+        }
+
+        function saveEventsToStorage() {
+            localStorage.setItem('campus_events', JSON.stringify(events));
+        }
+
+        function saveRegistrationsToStorage() {
+            localStorage.setItem('campus_registrations', JSON.stringify(registrations));
+        }
+
+        
+        function setupNavigation() {
+            const navLinks = document.querySelectorAll('.nav-link[data-target]');
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const targetId = link.getAttribute('data-target');
+                    if (targetId) switchView(targetId);
+                });
+            });
+
+            document.getElementById('navHomeLogo').addEventListener('click', () => {
+                switchView('viewBrowseEvents');
+            });
+
+            // Dark Mode Switcher Logic
+            const themeBtn = document.getElementById('themeToggleBtn');
+            themeBtn.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+            });
+        }
+
+        function switchView(viewId) {
+            // Active Link UI
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.getAttribute('data-target') === viewId) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+
+            // Switch Sections
+            document.querySelectorAll('.view-section').forEach(sec => {
+                sec.classList.remove('active');
+            });
+            const targetSec = document.getElementById(viewId);
+            if (targetSec) targetSec.classList.add('active');
+        }
+
+        /* --- RENDER EVENTS GRID (DOM Manipulation) --- */
+        function renderEventsGrid(filteredList = null) {
+            const container = document.getElementById('eventsGridContainer');
+            const listToRender = filteredList || events;
+
+            container.innerHTML = '';
+
+            if (listToRender.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24"><path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+                        <h3>No Events Found</h3>
+                        <p style="color: var(--text-muted);">Try adjusting your search criteria or category filter.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            listToRender.forEach(evt => {
+                const seatsLeft = evt.capacity - evt.registeredCount;
+                const isFull = seatsLeft <= 0;
+                const fillPercent = Math.min(100, Math.round((evt.registeredCount / evt.capacity) * 100));
+
+                let fillClass = '';
+                if (isFull) fillClass = 'full';
+                else if (fillPercent >= 80) fillClass = 'warning';
+
+                const formattedDate = new Date(evt.date).toLocaleString('en-US', {
+                    dateStyle: 'medium',
+                    timeStyle: 'short'
+                });
+
+                const cardHtml = `
+                    <article class="event-card">
+                        <div class="card-header">
+                            <!-- Category Decorative Icon -->
+                            <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/></svg>
+                            <span class="category-badge">${escapeHtml(evt.category)}</span>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="event-title">${escapeHtml(evt.title)}</h3>
+                            <p class="event-desc">${escapeHtml(evt.description)}</p>
+                            
+                            <div class="event-meta">
+                                <div class="meta-item">
+                                    <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                                    <span>${formattedDate}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                    <span>${escapeHtml(evt.venue)}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <svg viewBox="0 0 24 24"><path d="M12 2A10 10 0 1 0 22 12 10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg>
+                                    <span>${escapeHtml(evt.eligibility)}</span>
+                                </div>
+                            </div>
+
+                            <!-- Live Seat Count Display -->
+                            <div class="seat-status-bar">
+                                <div class="seat-info-flex">
+                                    <span>Seat Availability</span>
+                                    <span style="color: ${isFull ? 'var(--danger-color)' : 'var(--text-main)'}">
+                                        ${isFull ? 'FULL (0 Left)' : `${seatsLeft} / ${evt.capacity} Left`}
+                                    </span>
+                                </div>
+                                <div class="progress-bg">
+                                    <div class="progress-fill ${fillClass}" style="width: ${fillPercent}%;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <span style="font-size: 0.8rem; color: var(--text-muted);">ID: ${evt.id}</span>
+                            <button class="btn btn-primary btn-sm" 
+                                ${isFull ? 'disabled' : ''} 
+                                onclick="openRegisterModal('${evt.id}')">
+                                ${isFull ? 'Seats Full' : 'Register Now'}
+                            </button>
+                        </div>
+                    </article>
+                `;
+                container.innerHTML += cardHtml;
+            });
+        }
+
+
+        function filterEvents() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const category = document.getElementById('categoryFilter').value;
+
+            const filtered = events.filter(evt => {
+                const matchesSearch = evt.title.toLowerCase().includes(query) ||
+                    evt.venue.toLowerCase().includes(query) ||
+                    evt.description.toLowerCase().includes(query);
+
+                const matchesCategory = (category === 'ALL') || (evt.category === category);
+
+                return matchesSearch && matchesCategory;
+            });
+
+            renderEventsGrid(filtered);
+        }
+
+
+        function openRegisterModal(eventId) {
+            const evt = events.find(e => e.id === eventId);
+            if (!evt) return;
+
+            // Live Over-registration Check Validation
+            if (evt.capacity - evt.registeredCount <= 0) {
+                showToast("Registration Closed: This event has reached full seat capacity!", "error");
+                return;
+            }
+
+            document.getElementById('registerEventId').value = evt.id;
+            document.getElementById('modalEventTitle').innerText = `Register for: ${evt.title}`;
+            document.getElementById('studentRegistrationForm').reset();
+
+            openModal('registrationModal');
+        }
+
+        function handleStudentRegistration(event) {
+            event.preventDefault();
+
+            const eventId = document.getElementById('registerEventId').value;
+            const name = document.getElementById('regStudentName').value.trim();
+            const studentId = document.getElementById('regStudentId').value.trim();
+            const dept = document.getElementById('regDepartment').value;
+            const email = document.getElementById('regEmail').value.trim();
+            const year = document.getElementById('regYear').value;
+
+            const eventIndex = events.findIndex(e => e.id === eventId);
+            if (eventIndex === -1) return;
+
+            const targetEvt = events[eventIndex];
+
+            // Strict Validation Check to Prevent Over-Registration
+            if (targetEvt.registeredCount >= targetEvt.capacity) {
+                showToast("Seat reservation failed! The event just reached max capacity.", "error");
+                closeModal('registrationModal');
+                renderEventsGrid();
+                return;
+            }
+
+            // Update live seat count
+            targetEvt.registeredCount += 1;
+            saveEventsToStorage();
+
+            // Create Registration Record Ticket
+            const ticketId = 'TCK-' + Math.floor(100000 + Math.random() * 900000);
+            const newReg = {
+                ticketId: ticketId,
+                eventId: targetEvt.id,
+                eventTitle: targetEvt.title,
+                eventDate: targetEvt.date,
+                eventVenue: targetEvt.venue,
+                category: targetEvt.category,
+                studentName: name,
+                studentId: studentId,
+                department: dept,
+                email: email,
+                year: year,
+                registeredAt: new Date().toISOString()
+            };
+
+            registrations.push(newReg);
+            saveRegistrationsToStorage();
+
+            closeModal('registrationModal');
+            showToast("Registration Successful! Seat Reserved.", "success");
+
+            // Refresh UI Views
+            renderEventsGrid();
+            renderRegistrationsTable();
+            renderAdminEventsTable();
+            renderAdminRosterTable();
+            updateMyTicketBadge();
+
+            // Auto Display Confirmation Printable Ticket Modal
+            displayTicketSlip(newReg);
+        }
+
+        /* --- DISPLAY TICKET CONFIRMATION SLIP --- */
+        function displayTicketSlip(regRecord) {
+            document.getElementById('slipTicketId').innerText = regRecord.ticketId;
+            document.getElementById('slipEventTitle').innerText = regRecord.eventTitle;
+            document.getElementById('slipCategory').innerText = regRecord.category;
+            document.getElementById('slipStudentName').innerText = regRecord.studentName;
+            document.getElementById('slipStudentId').innerText = regRecord.studentId;
+            document.getElementById('slipDate').innerText = new Date(regRecord.eventDate).toLocaleString();
+            document.getElementById('slipVenue').innerText = regRecord.eventVenue;
+
+            openModal('confirmationTicketModal');
+        }
+
+        /* --- MY REGISTRATIONS TABLE RENDER --- */
+        function renderRegistrationsTable() {
+            const tbody = document.getElementById('myRegistrationsTableBody');
+            tbody.innerHTML = '';
+
+            if (registrations.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                            No registered event tickets found. Browse events to register!
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            registrations.forEach(reg => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${reg.ticketId}</strong></td>
+                    <td>${escapeHtml(reg.eventTitle)}</td>
+                    <td>${escapeHtml(reg.studentName)}</td>
+                    <td>${escapeHtml(reg.studentId)}</td>
+                    <td>${new Date(reg.eventDate).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })}</td>
+                    <td>${escapeHtml(reg.eventVenue)}</td>
+                    <td>
+                        <button class="btn btn-secondary btn-sm" onclick="viewTicketDirect('${reg.ticketId}')">
+                            🎟️ View Slip
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function viewTicketDirect(ticketId) {
+            const reg = registrations.find(r => r.ticketId === ticketId);
+            if (reg) displayTicketSlip(reg);
+        }
+
+        function updateMyTicketBadge() {
+            document.getElementById('myTicketCount').innerText = registrations.length;
+        }
+
+        /* --- ADMIN DASHBOARD & EVENT CREATION LOGIC --- */
+        function switchAdminTab(tabName) {
+            if (tabName === 'createEvent') {
+                switchAdminSubTab('createEvent');
+            }
+        }
+
+        function switchAdminSubTab(tabKey) {
+            document.getElementById('adminSubTabManageEvents').style.display = (tabKey === 'manageEvents') ? 'block' : 'none';
+            document.getElementById('adminSubTabCreateEvent').style.display = (tabKey === 'createEvent') ? 'block' : 'none';
+            document.getElementById('adminSubTabRoster').style.display = (tabKey === 'roster') ? 'block' : 'none';
+
+            document.getElementById('btnTabManageEvents').classList.toggle('active', tabKey === 'manageEvents');
+            document.getElementById('btnTabRoster').classList.toggle('active', tabKey === 'roster');
+        }
+
+        function handleCreateEvent(event) {
+            event.preventDefault();
+
+            const title = document.getElementById('evTitle').value.trim();
+            const category = document.getElementById('evCategory').value;
+            const capacity = parseInt(document.getElementById('evCapacity').value, 10);
+            const date = document.getElementById('evDate').value;
+            const venue = document.getElementById('evVenue').value.trim();
+            const eligibility = document.getElementById('evEligibility').value.trim();
+            const description = document.getElementById('evDescription').value.trim();
+
+            const newEvent = {
+                id: 'EVT-' + Math.floor(100 + Math.random() * 900),
+                title,
+                category,
+                capacity,
+                registeredCount: 0,
+                date,
+                venue,
+                eligibility,
+                description
+            };
+
+            events.unshift(newEvent);
+            saveEventsToStorage();
+
+            showToast("New Event Created Successfully!", "success");
+            document.getElementById('createEventForm').reset();
+
+            // Refresh Views
+            renderEventsGrid();
+            renderAdminEventsTable();
+            switchAdminSubTab('manageEvents');
+        }
+
+        function deleteEvent(eventId) {
+            if (!confirm("Are you sure you want to delete this event? All associated data will be removed.")) {
+                return;
+            }
+
+            events = events.filter(e => e.id !== eventId);
+            saveEventsToStorage();
+
+            showToast("Event removed from portal.", "success");
+            renderEventsGrid();
+            renderAdminEventsTable();
+        }
+
+        function renderAdminEventsTable() {
+            const tbody = document.getElementById('adminEventsTableBody');
+            tbody.innerHTML = '';
+
+            events.forEach(evt => {
+                const seatsLeft = evt.capacity - evt.registeredCount;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${escapeHtml(evt.title)}</strong></td>
+                    <td><span class="category-badge" style="position:static;">${evt.category}</span></td>
+                    <td>${new Date(evt.date).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })}</td>
+                    <td>${evt.capacity}</td>
+                    <td>${evt.registeredCount}</td>
+                    <td>
+                        <span style="color: ${seatsLeft <= 0 ? 'var(--danger-color)' : 'var(--success-color)'}; font-weight:600;">
+                            ${seatsLeft}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="deleteEvent('${evt.id}')">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderAdminRosterTable() {
+            const tbody = document.getElementById('adminRosterTableBody');
+            tbody.innerHTML = '';
+
+            if (registrations.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted);">No student registrations logged yet.</td></tr>`;
+                return;
+            }
+
+            registrations.forEach(reg => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${reg.ticketId}</strong></td>
+                    <td>${escapeHtml(reg.studentName)}</td>
+                    <td>${escapeHtml(reg.studentId)}</td>
+                    <td>${escapeHtml(reg.email)}</td>
+                    <td>${escapeHtml(reg.department)} (${reg.year})</td>
+                    <td>${escapeHtml(reg.eventTitle)}</td>
+                    <td>${new Date(reg.registeredAt).toLocaleDateString()}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        /* --- HELPER UTILITIES (Modal & Toast) --- */
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<span>${message}</span>`;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        // HTML Sanitization helper against XSS
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&brvbar;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+
+</html>
